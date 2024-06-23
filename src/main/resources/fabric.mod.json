@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "custompaintings",
+  "version": "${version}",
+  "name": "Custom Paintings (No UI)",
+  "description": "Add your own custom paintings to Minecraft.\nVariant of the mod without any custom UIs.\n${library}",
+  "authors": [
+    "Roundaround"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/custom-paintings-mod",
+    "sources": "https://github.com/Roundaround/mc-fabric-custom-paintings-noui",
+    "issues": "https://github.com/Roundaround/mc-fabric-custom-paintings-noui/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/custompaintings/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.roundaround.custompaintings.client.CustomPaintingsClientMod"
+    ],
+    "main": [
+      "me.roundaround.custompaintings.CustomPaintingsMod"
+    ]
+  },
+  "mixins": [
+    "custompaintings.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "minecraft": "1.20.*",
+    "java": ">=17"
+  }
+}

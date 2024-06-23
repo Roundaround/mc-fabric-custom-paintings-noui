@@ -1,0 +1,25 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.roundaround.custompaintings.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "DecorationItemMixin",
+    "EntityAccessor",
+    "PaintingEntityAccessor",
+    "PaintingEntityMixin",
+    "PlayerManagerMixin"
+  ],
+  "client": [
+    "DebugRendererMixin",
+    "EntityRendererMixin",
+    "GameRendererMixin",
+    "MinecraftClientMixin",
+    "PaintingEntityRendererMixin",
+    "SpriteAtlasHolderAccessor"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
