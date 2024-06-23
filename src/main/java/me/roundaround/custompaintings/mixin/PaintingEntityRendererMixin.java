@@ -68,14 +68,14 @@ public abstract class PaintingEntityRendererMixin extends EntityRenderer<Paintin
     }
 
     // 3 - width
-    args.set(3, paintingData.getScaledWidth());
+    args.set(3, paintingData.width());
     // 4 - height
-    args.set(4, paintingData.getScaledHeight());
+    args.set(4, paintingData.height());
 
     CustomPaintingManager paintingManager = CustomPaintingsClientMod.customPaintingManager;
     if (paintingManager.exists(paintingData.id())) {
       // 5 - front sprite
-      args.set(5, paintingManager.getPaintingSprite(paintingData));
+      args.set(5, paintingManager.getPaintingSprite(entity.getWorld(), paintingData));
       // 6 - back sprite
       args.set(6, paintingManager.getBackSprite());
     } else {

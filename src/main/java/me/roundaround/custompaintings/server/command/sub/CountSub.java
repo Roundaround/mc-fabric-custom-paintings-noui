@@ -59,14 +59,14 @@ public class CountSub {
 
     PaintingEntity vanillaPainting = maybePainting.get();
     if (!(vanillaPainting instanceof ExpandedPaintingEntity)) {
-      Identifier id = Registries.PAINTING_VARIANT.getId(vanillaPainting.getVariant().value());
+      Identifier id = vanillaPainting.getVariant().value().assetId();
       return execute(source, id);
     }
 
     ExpandedPaintingEntity painting = (ExpandedPaintingEntity) vanillaPainting;
     PaintingData paintingData = painting.getCustomData();
     if (paintingData.isEmpty() || paintingData.isVanilla()) {
-      Identifier id = Registries.PAINTING_VARIANT.getId(vanillaPainting.getVariant().value());
+      Identifier id = vanillaPainting.getVariant().value().assetId();
       return execute(source, id);
     }
 

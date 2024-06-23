@@ -12,11 +12,13 @@ import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.*;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.resource.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.Pair;
 import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.World;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
 public class CustomPaintingManager implements IdentifiableResourceReloadListener, AutoCloseable {
   private static final MinecraftClient MINECRAFT = MinecraftClient.getInstance();
   private static final Pattern PATTERN = Pattern.compile("(?:\\w*/)*?(\\w+)\\.png");
-  private static final Identifier PAINTING_BACK_ID = new Identifier(Identifier.DEFAULT_NAMESPACE, "back");
+  private static final Identifier PAINTING_BACK_ID = Identifier.of(Identifier.DEFAULT_NAMESPACE, "back");
 
   private final SpriteAtlasTexture atlas;
   private final HashMap<String, Pack> packs = new HashMap<>();
@@ -42,7 +44,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
   private final HashSet<Identifier> spriteIds = new HashSet<>();
 
   public CustomPaintingManager(TextureManager manager) {
-    this.atlas = new SpriteAtlasTexture(new Identifier("textures/atlas/custompaintings.png"));
+    this.atlas = new SpriteAtlasTexture(Identifier.of("textures/atlas/custompaintings.png"));
     manager.registerTexture(this.atlas.getId(), this.atlas);
   }
 
@@ -83,7 +85,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
                     packs.put(pack.id(), pack);
 
                     pack.paintings().forEach((painting) -> {
-                      Identifier id = new Identifier(pack.id(), painting.id());
+                      Identifier id = Identifier.of(pack.id(), painting.id());
                       data.put(id,
                           new PaintingData(id, painting.index(), painting.width().orElse(1),
                               painting.height().orElse(1),
@@ -117,7 +119,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
                             paintingPath = matcher.group(1);
                           }
 
-                          id = new Identifier(paintingNamespace, paintingPath);
+                          id = Identifier.of(paintingNamespace, paintingPath);
 
                           spriteIds.add(id);
                           spriteResources.add(new Pair<>(id, new Resource(resourcePack, supplier)));
@@ -140,7 +142,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
           spriteIds.add(PAINTING_BACK_ID);
           suppliers.add((opener) -> opener.loadSprite(PAINTING_BACK_ID,
               new Resource(MINECRAFT.getDefaultResourcePack(), MINECRAFT.getDefaultResourcePack()
-                  .open(ResourceType.CLIENT_RESOURCES, new Identifier("textures/painting/back.png")))
+                  .open(ResourceType.CLIENT_RESOURCES, Identifier.of("textures/painting/back.png")))
           ));
 
           return suppliers;
@@ -168,7 +170,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
 
   @Override
   public Identifier getFabricId() {
-    return new Identifier(CustomPaintingsMod.MOD_ID, "custom_paintings");
+    return Identifier.of(CustomPaintingsMod.MOD_ID, "custom_paintings");
   }
 
   public void sendKnownPaintingsToServer() {
@@ -207,12 +209,13 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
     return packs.values().stream().flatMap((pack) -> pack.migrations().stream()).collect(Collectors.toList());
   }
 
-  public Sprite getPaintingSprite(PaintingData paintingData) {
+  public Sprite getPaintingSprite(World world, PaintingData paintingData) {
     if (paintingData == null || paintingData.isEmpty()) {
       return getBackSprite();
     }
     if (paintingData.isVanilla()) {
-      return MINECRAFT.getPaintingManager().getPaintingSprite(Registries.PAINTING_VARIANT.get(paintingData.id()));
+      return MINECRAFT.getPaintingManager()
+          .getPaintingSprite(world.getRegistryManager().get(RegistryKeys.PAINTING_VARIANT).get(paintingData.id()));
     }
     return getSprite(paintingData.id());
   }
@@ -302,7 +305,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
 
     // Pack ID must be a valid Identifier namespace
     try {
-      new Identifier(id.get(), "dummy");
+      Identifier.of(id.get(), "dummy");
     } catch (InvalidIdentifierException e) {
       throw new ParseException("Non [a-z0-9_.-] character in pack ID (" + id.get() + ")");
     }
@@ -386,7 +389,7 @@ public class CustomPaintingManager implements IdentifiableResourceReloadListener
 
     // Painting ID must be a valid Identifier path
     try {
-      new Identifier("dummy", paintingId.get());
+      Identifier.of("dummy", paintingId.get());
     } catch (InvalidIdentifierException e) {
       throw new ParseException("Non [a-z0-9/._-] character in painting ID (" + paintingId.get() + ").");
     }

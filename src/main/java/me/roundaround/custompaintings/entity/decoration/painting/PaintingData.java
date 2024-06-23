@@ -27,8 +27,8 @@ public record PaintingData(Identifier id, int index, int width, int height, Stri
   }
 
   public PaintingData(PaintingVariant vanillaVariant, int index) {
-    this(Registries.PAINTING_VARIANT.getId(vanillaVariant), index, vanillaVariant.getWidth() / 16,
-        vanillaVariant.getHeight() / 16, Registries.PAINTING_VARIANT.getId(vanillaVariant).getPath(), "", true
+    this(vanillaVariant.assetId(), index, vanillaVariant.width(), vanillaVariant.height(), vanillaVariant.toString(),
+        "", true
     );
   }
 

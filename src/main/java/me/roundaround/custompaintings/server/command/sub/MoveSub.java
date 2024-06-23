@@ -43,9 +43,9 @@ public class MoveSub {
     }
 
     PaintingEntity painting = maybePainting.get();
-    int x = painting.getDecorationBlockPos().getX();
-    int y = painting.getDecorationBlockPos().getY();
-    int z = painting.getDecorationBlockPos().getZ();
+    int x = painting.getAttachedBlockPos().getX();
+    int y = painting.getAttachedBlockPos().getY();
+    int z = painting.getAttachedBlockPos().getZ();
     Direction facing = painting.getHorizontalFacing();
 
     int newX = x;

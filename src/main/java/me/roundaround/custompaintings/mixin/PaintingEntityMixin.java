@@ -1,5 +1,7 @@
 package me.roundaround.custompaintings.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import me.roundaround.custompaintings.CustomPaintingsMod;
 import me.roundaround.custompaintings.entity.decoration.painting.ExpandedPaintingEntity;
 import me.roundaround.custompaintings.entity.decoration.painting.PaintingData;
@@ -10,7 +12,10 @@ import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.BuiltinRegistries;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
@@ -25,7 +30,7 @@ import java.util.UUID;
 
 @Mixin(PaintingEntity.class)
 public abstract class PaintingEntityMixin extends AbstractDecorationEntity implements ExpandedPaintingEntity {
-  private static final TrackedData<PaintingData> CUSTOM_DATA = DataTracker.registerData(PaintingEntity.class,
+  private static final TrackedData<PaintingData> CUSTOM_DATA = DataTracker.registerData(PaintingEntityMixin.class,
       CustomPaintingsMod.CUSTOM_PAINTING_DATA_HANDLER
   );
 
@@ -85,16 +90,14 @@ public abstract class PaintingEntityMixin extends AbstractDecorationEntity imple
 
   @Override
   public void setVariant(Identifier id) {
-    Registries.PAINTING_VARIANT.streamEntries()
+    this.getWorld()
+        .getRegistryManager()
+        .get(RegistryKeys.PAINTING_VARIANT)
+        .streamEntries()
         .filter((ref) -> ref.matchesId(id))
-        .map((ref) -> ref.getKey())
-        .filter(Optional::isPresent)
-        .map(Optional::get)
         .findFirst()
-        .ifPresent((key) -> {
-          Registries.PAINTING_VARIANT.getEntry(key).ifPresent((entry) -> {
-            ((PaintingEntityAccessor) this).invokeSetVariant(entry);
-          });
+        .ifPresent((entry) -> {
+          ((PaintingEntityAccessor) this).invokeSetVariant(entry);
         });
   }
 
@@ -103,12 +106,19 @@ public abstract class PaintingEntityMixin extends AbstractDecorationEntity imple
     builder.add(CUSTOM_DATA, PaintingData.EMPTY);
   }
 
-  @Inject(method = "onTrackedDataSet", at = @At(value = "TAIL"))
+  @Inject(method = "method_5674", at = @At(value = "TAIL"))
   private void onTrackedDataSet(TrackedData<?> data, CallbackInfo info) {
     if (CUSTOM_DATA.equals(data)) {
       updateAttachmentPosition();
     }
   }
+
+//  @Inject(method = "onTrackedDataSet", at = @At(value = "TAIL"))
+//  private void onTrackedDataSet(TrackedData<?> data, CallbackInfo info) {
+//    if (CUSTOM_DATA.equals(data)) {
+//      updateAttachmentPosition();
+//    }
+//  }
 
   @Inject(method = "writeCustomDataToNbt", at = @At(value = "HEAD"))
   private void writeCustomDataToNbt(NbtCompound nbt, CallbackInfo info) {
@@ -125,23 +135,27 @@ public abstract class PaintingEntityMixin extends AbstractDecorationEntity imple
     }
   }
 
-  @Inject(method = "getWidthPixels", at = @At(value = "HEAD"), cancellable = true)
-  private void getWidthPixels(CallbackInfoReturnable<Integer> info) {
-    PaintingData paintingData = getCustomData();
+  @ModifyExpressionValue(
+      method = "calculateBoundingBox",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/painting/PaintingVariant;width()I")
+  )
+  private int getWidth(int original) {
+    PaintingData paintingData = this.getCustomData();
     if (paintingData.isEmpty()) {
-      return;
+      return original;
     }
-
-    info.setReturnValue(paintingData.getScaledWidth());
+    return paintingData.width();
   }
 
-  @Inject(method = "getHeightPixels", at = @At(value = "HEAD"), cancellable = true)
-  private void getHeightPixels(CallbackInfoReturnable<Integer> info) {
-    PaintingData paintingData = getCustomData();
+  @ModifyExpressionValue(
+      method = "calculateBoundingBox",
+      at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/painting/PaintingVariant;height()I")
+  )
+  private int getHeight(int original) {
+    PaintingData paintingData = this.getCustomData();
     if (paintingData.isEmpty()) {
-      return;
+      return original;
     }
-
-    info.setReturnValue(paintingData.getScaledHeight());
+    return paintingData.height();
   }
 }

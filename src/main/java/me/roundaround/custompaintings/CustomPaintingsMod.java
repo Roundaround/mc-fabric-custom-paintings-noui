@@ -36,7 +36,7 @@ public final class CustomPaintingsMod implements ModInitializer {
     TrackedDataHandlerRegistry.register(CUSTOM_PAINTING_DATA_HANDLER);
     ServerNetworking.registerReceivers();
 
-    ArgumentTypeRegistry.registerArgumentType(new Identifier(CustomPaintingsMod.MOD_ID, "move_direction"),
+    ArgumentTypeRegistry.registerArgumentType(Identifier.of(CustomPaintingsMod.MOD_ID, "move_direction"),
         MoveDirectionArgumentType.class, ConstantArgumentSerializer.of(MoveDirectionArgumentType::direction)
     );
 

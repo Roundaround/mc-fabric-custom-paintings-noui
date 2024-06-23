@@ -57,9 +57,7 @@ public class IdentifySub {
       lines.add(paintingData.getLabel());
     }
 
-    lines.add(Text.translatable("custompaintings.painting.dimensions",
-        paintingData.width(),
-        paintingData.height()));
+    lines.add(Text.translatable("custompaintings.painting.dimensions", paintingData.width(), paintingData.height()));
 
     int count = CountSub.countPaintings(source.getServer(), paintingData.id());
     lines.add(Text.translatable("custompaintings.command.identify.count", count));
@@ -87,12 +85,10 @@ public class IdentifySub {
     ArrayList<Text> lines = new ArrayList<>();
 
     PaintingVariant variant = painting.getVariant().value();
-    String id = Registries.PAINTING_VARIANT.getId(variant).toString();
+    String id = variant.assetId().toString();
 
     lines.add(Text.literal(id));
-    lines.add(Text.translatable("custompaintings.painting.dimensions",
-        variant.getWidth() / 16,
-        variant.getHeight() / 16));
+    lines.add(Text.translatable("custompaintings.painting.dimensions", variant.width(), variant.height()));
 
     for (Text line : lines) {
       source.sendFeedback(() -> line, false);

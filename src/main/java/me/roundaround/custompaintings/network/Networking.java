@@ -22,28 +22,28 @@ public final class Networking {
   private Networking() {
   }
 
-  public static final Identifier EDIT_PAINTING_S2C = new Identifier(CustomPaintingsMod.MOD_ID, "edit_painting_s2c");
-  public static final Identifier OPEN_MANAGE_SCREEN_S2C = new Identifier(
+  public static final Identifier EDIT_PAINTING_S2C = Identifier.of(CustomPaintingsMod.MOD_ID, "edit_painting_s2c");
+  public static final Identifier OPEN_MANAGE_SCREEN_S2C = Identifier.of(
       CustomPaintingsMod.MOD_ID, "open_manage_screen_s2c");
-  public static final Identifier LIST_UNKNOWN_S2C = new Identifier(CustomPaintingsMod.MOD_ID, "list_unknown_s2c");
-  public static final Identifier LIST_MISMATCHED_S2C = new Identifier(CustomPaintingsMod.MOD_ID, "list_mismatched_s2c");
+  public static final Identifier LIST_UNKNOWN_S2C = Identifier.of(CustomPaintingsMod.MOD_ID, "list_unknown_s2c");
+  public static final Identifier LIST_MISMATCHED_S2C = Identifier.of(CustomPaintingsMod.MOD_ID, "list_mismatched_s2c");
 
-  public static final Identifier SET_PAINTING_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "set_painting_c2s");
-  public static final Identifier DECLARE_KNOWN_PAINTINGS_C2S = new Identifier(CustomPaintingsMod.MOD_ID,
+  public static final Identifier SET_PAINTING_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "set_painting_c2s");
+  public static final Identifier DECLARE_KNOWN_PAINTINGS_C2S = Identifier.of(CustomPaintingsMod.MOD_ID,
       "declare_known_paintings_c2s"
   );
-  public static final Identifier REQUEST_UNKNOWN_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "request_unknown_c2s");
-  public static final Identifier REQUEST_MISMATCHED_C2S = new Identifier(CustomPaintingsMod.MOD_ID,
+  public static final Identifier REQUEST_UNKNOWN_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "request_unknown_c2s");
+  public static final Identifier REQUEST_MISMATCHED_C2S = Identifier.of(CustomPaintingsMod.MOD_ID,
       "request_mismatched_c2s"
   );
-  public static final Identifier REASSIGN_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "reassign_c2s");
-  public static final Identifier REASSIGN_ALL_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "reassign_all_c2s");
-  public static final Identifier UPDATE_PAINTING_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "update_painting_c2s");
-  public static final Identifier REMOVE_PAINTING_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "remove_painting_c2s");
-  public static final Identifier REMOVE_ALL_PAINTINGS_C2S = new Identifier(CustomPaintingsMod.MOD_ID,
+  public static final Identifier REASSIGN_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "reassign_c2s");
+  public static final Identifier REASSIGN_ALL_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "reassign_all_c2s");
+  public static final Identifier UPDATE_PAINTING_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "update_painting_c2s");
+  public static final Identifier REMOVE_PAINTING_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "remove_painting_c2s");
+  public static final Identifier REMOVE_ALL_PAINTINGS_C2S = Identifier.of(CustomPaintingsMod.MOD_ID,
       "remove_all_paintings_c2s"
   );
-  public static final Identifier APPLY_MIGRATION_C2S = new Identifier(CustomPaintingsMod.MOD_ID, "apply_migration_c2s");
+  public static final Identifier APPLY_MIGRATION_C2S = Identifier.of(CustomPaintingsMod.MOD_ID, "apply_migration_c2s");
 
   public static void registerS2CPayloads() {
     PayloadTypeRegistry.playS2C().register(EditPaintingS2C.ID, EditPaintingS2C.CODEC);

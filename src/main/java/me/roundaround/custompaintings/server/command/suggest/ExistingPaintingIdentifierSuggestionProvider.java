@@ -45,7 +45,7 @@ public class ExistingPaintingIdentifierSuggestionProvider implements SuggestionP
       world.getEntitiesByType(EntityType.PAINTING, (entity) -> true).forEach((entity) -> {
         if (isVanillaPainting(entity)) {
           if (!this.missingOnly) {
-            builder.suggest(Registries.PAINTING_VARIANT.getId(entity.getVariant().value()).toString());
+            builder.suggest(entity.getVariant().value().assetId().toString());
           }
           return;
         }

@@ -16,6 +16,7 @@ import me.roundaround.custompaintings.entity.decoration.painting.PaintingData;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
 
@@ -32,8 +33,8 @@ public class KnownPaintingIdentifierSuggestionProvider implements SuggestionProv
 
   @Override
   public CompletableFuture<Suggestions> getSuggestions(
-      CommandContext<ServerCommandSource> context,
-      SuggestionsBuilder builder) throws CommandSyntaxException {
+      CommandContext<ServerCommandSource> context, SuggestionsBuilder builder
+  ) throws CommandSyntaxException {
     UUID playerId = context.getSource().getPlayer().getUuid();
     HashSet<Identifier> existing = new HashSet<>();
 
@@ -41,7 +42,7 @@ public class KnownPaintingIdentifierSuggestionProvider implements SuggestionProv
       context.getSource().getServer().getWorlds().forEach((world) -> {
         world.getEntitiesByType(EntityType.PAINTING, (entity) -> true).forEach((entity) -> {
           if (isVanillaPainting(entity)) {
-            existing.add(Registries.PAINTING_VARIANT.getId(entity.getVariant().value()));
+            existing.add(entity.getVariant().value().assetId());
             return;
           }
           existing.add(((ExpandedPaintingEntity) entity).getCustomData().id());
@@ -49,13 +50,18 @@ public class KnownPaintingIdentifierSuggestionProvider implements SuggestionProv
       });
     }
 
-    Registries.PAINTING_VARIANT.forEach((paintingVariant) -> {
-      Identifier id = Registries.PAINTING_VARIANT.getId(paintingVariant);
-      if (this.existingOnly && !existing.contains(id)) {
-        return;
-      }
-      builder.suggest(id.toString());
-    });
+    context.getSource()
+        .getPlayer()
+        .getWorld()
+        .getRegistryManager()
+        .get(RegistryKeys.PAINTING_VARIANT)
+        .forEach((paintingVariant) -> {
+          Identifier id = paintingVariant.assetId();
+          if (this.existingOnly && !existing.contains(id)) {
+            return;
+          }
+          builder.suggest(id.toString());
+        });
 
     HashSet<PaintingData> knownPaintings = CustomPaintingsMod.knownPaintings.get(playerId);
     if (knownPaintings != null) {

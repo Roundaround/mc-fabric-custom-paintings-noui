@@ -18,8 +18,7 @@ import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.entity.decoration.painting.PaintingVariants;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.PaintingVariantTags;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -525,9 +524,9 @@ public final class ServerPaintingManager {
       return;
     }
 
-    HashMap<Identifier, PaintingData> map = getVanillaPaintingData();
+    HashMap<Identifier, PaintingData> map = getVanillaPaintingData(player.getWorld());
     paintings.forEach((painting) -> {
-      Identifier id = Registries.PAINTING_VARIANT.getId(painting.getVariant().value());
+      Identifier id = painting.getVariant().value().assetId();
       if (!map.containsKey(id)) {
         return;
       }
@@ -539,27 +538,18 @@ public final class ServerPaintingManager {
     Map<Identifier, PaintingData> known = CustomPaintingsMod.knownPaintings.get(player.getUuid())
         .stream()
         .collect(Collectors.toMap(PaintingData::id, Function.identity()));
-    known.putAll(getVanillaPaintingData());
+    known.putAll(getVanillaPaintingData(player.getWorld()));
     return known;
   }
 
-  public static HashMap<Identifier, PaintingData> getVanillaPaintingData() {
+  public static HashMap<Identifier, PaintingData> getVanillaPaintingData(World world) {
     HashMap<Identifier, PaintingData> placeable = new HashMap<>();
     HashMap<Identifier, PaintingData> unplaceable = new HashMap<>();
 
-    Registries.PAINTING_VARIANT.stream().forEach((vanillaVariant) -> {
-      Identifier id = Registries.PAINTING_VARIANT.getId(vanillaVariant);
-      RegistryKey<PaintingVariant> key = RegistryKey.of(Registries.PAINTING_VARIANT.getKey(), id);
-      Optional<RegistryEntry.Reference<PaintingVariant>> maybeEntry = Registries.PAINTING_VARIANT.getEntry(key);
-
-      if (!maybeEntry.isPresent()) {
-        return;
-      }
-
-      RegistryEntry<PaintingVariant> entry = maybeEntry.get();
+    world.getRegistryManager().get(RegistryKeys.PAINTING_VARIANT).streamEntries().forEach((entry) -> {
       boolean isPlaceable = entry.isIn(PaintingVariantTags.PLACEABLE);
       HashMap<Identifier, PaintingData> map = isPlaceable ? placeable : unplaceable;
-      PaintingData paintingData = new PaintingData(vanillaVariant, map.size());
+      PaintingData paintingData = new PaintingData(entry.value(), map.size());
       map.put(paintingData.id(), paintingData);
     });
 
@@ -576,8 +566,8 @@ public final class ServerPaintingManager {
     HashMap<Identifier, Identifier> unknownMappings = new HashMap<>();
 
     migration.pairs().forEach((pair) -> {
-      Identifier sourceId = new Identifier(pair.getLeft());
-      Identifier targetId = new Identifier(pair.getRight());
+      Identifier sourceId = Identifier.of(pair.getLeft());
+      Identifier targetId = Identifier.of(pair.getRight());
       PaintingData targetData = known.getOrDefault(targetId, null);
       if (targetData == null) {
         unknownMappings.put(sourceId, targetId);
@@ -642,8 +632,9 @@ public final class ServerPaintingManager {
   public static Optional<PaintingEntity> placePainting(
       ServerPlayerEntity player, World world, BlockPos pos, Direction facing
   ) {
-    Optional<RegistryEntry.Reference<PaintingVariant>> placeholder = Registries.PAINTING_VARIANT.getEntry(
-        PaintingVariants.KEBAB);
+    Optional<RegistryEntry.Reference<PaintingVariant>> placeholder = world.getRegistryManager()
+        .get(RegistryKeys.PAINTING_VARIANT)
+        .getEntry(PaintingVariants.KEBAB);
     if (placeholder.isEmpty()) {
       return Optional.empty();
     }
