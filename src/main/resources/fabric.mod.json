@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "custompaintings",
+  "id": "custompaintings-noui",
   "version": "${version}",
   "name": "Custom Paintings (No UI)",
   "description": "Add your own custom paintings to Minecraft.\nVariant of the mod without any custom UIs.\n${library}",
@@ -13,7 +13,7 @@
     "issues": "https://github.com/Roundaround/mc-fabric-custom-paintings-noui/issues"
   },
   "license": "MIT",
-  "icon": "assets/custompaintings/icon.png",
+  "icon": "assets/custompaintings-noui/icon.png",
   "environment": "*",
   "entrypoints": {
     "client": [
@@ -24,7 +24,7 @@
     ]
   },
   "mixins": [
-    "custompaintings.mixins.json"
+    "custompaintings-noui.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",

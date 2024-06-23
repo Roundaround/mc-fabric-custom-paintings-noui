@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.UUID;
 
 public final class CustomPaintingsMod implements ModInitializer {
-  public static final String MOD_ID = "custompaintings";
+  public static final String MOD_ID = "custompaintings-noui";
   public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
   public static final TrackedDataHandler<PaintingData> CUSTOM_PAINTING_DATA_HANDLER =
